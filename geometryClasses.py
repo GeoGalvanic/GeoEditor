@@ -31,4 +31,4 @@ class PolygonEntity(Entity):
         for coord in coordSequence:
             coordList.append(coord)
 
-        self.patches.append(ptch.Polygon(coordList, self.layer.color, picker=True))
+        self.patches.append(ptch.Polygon(coordList, color = self.layer.color, picker=True))

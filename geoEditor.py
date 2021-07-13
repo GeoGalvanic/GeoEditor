@@ -11,12 +11,15 @@ import tkinter as tk
 import logging
 from geometryClasses import *
 from layerClasses import Layer
+from dialogGUI import *
 
 def on_pick(event):
-    print(event.artist)
-    print(layer.artistEntityPairs[event.artist].gdfRow)
+    if event.mouseevent.name == 'button_press_event':
+        print(layer.artistEntityPairs[event.artist].gdfRow)
+        AttributeDialog.openOrAdd()
 
-root= tk.Tk() 
+root= tk.Tk()
+root.title("GeoEditor")
   
 figure1 = plt.Figure()
 
