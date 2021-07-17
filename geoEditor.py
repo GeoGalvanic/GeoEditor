@@ -16,7 +16,7 @@ from dialogGUI import *
 def on_pick(event):
     if event.mouseevent.name == 'button_press_event':
         print(layer.artistEntityPairs[event.artist].gdfRow)
-        AttributeDialog.openOrAdd()
+        AttributeDialog.openOrAdd(layer.artistEntityPairs[event.artist])
 
 root= tk.Tk()
 root.title("GeoEditor")

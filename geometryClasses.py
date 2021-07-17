@@ -5,9 +5,10 @@ import matplotlib.patches as ptch
 
 class Entity():
     '''Abstract base class for entities. Shold not be called directly, insead sub-classes should be used.'''
-    def __init__(self,gdfRow,layer):
+    def __init__(self,gdfRow,layer, displayField = 0):
         self.gdfRow = gdfRow
         self.layer = layer
+        self.displayField = displayField
 
         self.patches = []
 
@@ -19,6 +20,9 @@ class Entity():
 
     def pickAction(self, mouse, blind):
         print(self.gdfRow)
+
+    def __str__(self):
+        return str(self.gdfRow[self.displayField])
 
 class PolygonEntity(Entity):
     def __init__(self,gdfRow,layer):
@@ -32,3 +36,4 @@ class PolygonEntity(Entity):
             coordList.append(coord)
 
         self.patches.append(ptch.Polygon(coordList, color = self.layer.color, picker=True))
+
