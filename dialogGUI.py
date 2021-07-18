@@ -1,7 +1,5 @@
 import tkinter as tk
-import geopandas as gpd
-from matplotlib.pyplot import fill, margins, text
-from tkinter import Canvas, ttk
+from tkinter import ttk
 
 class AttributeDialog(tk.Toplevel):
     #attribute defining currently open window, so that we can assure that there is only one
@@ -23,6 +21,7 @@ class AttributeDialog(tk.Toplevel):
         #initial window properties
         self.title('Edit Attributes')
         self.minsize(250,350)
+        self.attributes('-topmost', 'true')
         self.entities = [entity]
 
         #handling for when window is closed
@@ -106,7 +105,6 @@ class AttributeDialog(tk.Toplevel):
 
     def _resizeAttributeCanvas(self,event):
         canvasWidth = event.width
-        canvasHeight = event.height
         self.attributeCanvas.itemconfig(self.canvasFrame, width = canvasWidth)
         self.attributeCanvas.configure(scrollregion= self.attributeCanvas.bbox("all"))
 
