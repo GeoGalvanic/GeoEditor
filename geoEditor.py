@@ -47,5 +47,6 @@ figure1.canvas.mpl_connect('pick_event', on_pick)
 plt.show(block=False)
 
 ax1.autoscale()
+ax1.set_aspect('equal', adjustable = 'datalim', anchor = 'C')
 
 root.mainloop()
