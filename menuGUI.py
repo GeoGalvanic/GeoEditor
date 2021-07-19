@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 from dialogGUI import NewLayerDialog, PointSymbolDialog, LineSymbolDialog, PolygonSymbolDialog, AttributeTable
 
 class GeoMenu(tk.Menu):
@@ -51,7 +51,7 @@ class GeoLayerMenu(tk.Menu):
     def addLayerSubmenu(self, layer):
         layerMenu = LayerMenu(self, layer)
 
-        self.add_cascade(menu= layerMenu, label = str(layer))
+        self.add_cascade(menu= layerMenu, label = layer)
 
 class GeoPrefsMenu(tk.Menu):
     def __init__(self, parent):
@@ -63,10 +63,11 @@ class LayerMenu(tk.Menu):
     def __init__(self, parent, layer):
         super().__init__(parent)
 
+        self.parent = parent
         self.layer = layer
 
         #change layer name
-        self.add_command(label = "Change Layer Name", command=self.layer.changeName)
+        self.add_command(label = "Change Layer Name", command=self.changeName)
 
         #change layer symbols
         layerSymbolMenu = tk.Menu(self)
@@ -81,10 +82,10 @@ class LayerMenu(tk.Menu):
         self.add_command(label='Save New Data File...', command= self.layer.saveToFile)
 
         #discard layer edits
-        self.add_command(label= 'Discard Edits' , command= layer.discardEdits)
+        self.add_command(label= 'Discard Edits' , command= self.layer.discardEdits)
 
         #change display field
-        self.add_command(label='Change Display Field', command=self.layer.changeDisplay)
+        self.add_command(label='Change Display Field', command=self.changeDisplay)
 
         #change selectable
         self.selectable = tk.BooleanVar(self,True)
@@ -109,6 +110,25 @@ class LayerMenu(tk.Menu):
 
     def changeSelectable(self, *_):
         self.layer.setSelectable(self.selectable.get())
+
+    def changeDisplay(self):
+        field = simpledialog.askstring('Display Field', 'Enter field to name entities in attribute window:')
+
+        if field:
+            try:
+                self.layer.gdf[field]
+            except KeyError:
+                print("Invalid Disply Field, no such column with name.")
+            else:
+                self.layer.displayField = field
+
+    def changeName(self):
+        name = simpledialog.askstring('Set Layer Name', 'Enter new name for layer:')
+
+        if name:
+            self.parent.entryconfig(self.layer.name, label = name)
+
+            self.layer.changeName(name)
 
     def openTable(self):
         AttributeTable(self.layer)

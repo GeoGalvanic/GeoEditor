@@ -35,11 +35,11 @@ class Layer():
         for i, row in self.gdf.iterrows():
             geomType = type(row.geometry)
             if geomType == Polygon or geomType == MultiPolygon:
-                entity = geometryClasses.PolygonEntity(row,self,self.displayField)
+                entity = geometryClasses.PolygonEntity(row,self)
             elif geomType == Point or geomType == MultiPoint:
-                entity = geometryClasses.PointEntity(row,self,self.displayField)
+                entity = geometryClasses.PointEntity(row,self)
             elif geomType == LineString or geomType == MultiLineString:
-                entity = geometryClasses.LineEntity(row,self,self.displayField)
+                entity = geometryClasses.LineEntity(row,self)
             else:
                 print('invalid geometry type')
             self.entities.append(entity)
@@ -54,11 +54,8 @@ class Layer():
                 self.artistEntityPairs[artist] = entity
         return True
 
-    def changeName(self):
-        pass
-
-    def changeDisplay(self):
-        pass
+    def changeName(self, value):
+        self.name = value
     
     def saveSource(self):
         pass

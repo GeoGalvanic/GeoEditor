@@ -7,10 +7,9 @@ from matplotlib.lines import Line2D
 
 class Entity():
     '''Abstract base class for entities. Shold not be called directly, insead sub-classes should be used.'''
-    def __init__(self,gdfRow,layer, displayField):
+    def __init__(self,gdfRow,layer):
         self.gdfRow = gdfRow
         self.layer = layer
-        self.displayField = displayField
 
         self.patches = []
         self.artists = []
@@ -25,11 +24,11 @@ class Entity():
         print(self.gdfRow)
 
     def __str__(self):
-        return str(self.gdfRow[self.displayField])
+        return f"{self.gdfRow[self.layer.displayField]} : {self.layer.name}"
 
 class PolygonEntity(Entity):
-    def __init__(self,gdfRow,layer, displayField):
-        super(PolygonEntity,self).__init__(gdfRow,layer, displayField)
+    def __init__(self,gdfRow,layer):
+        super(PolygonEntity,self).__init__(gdfRow,layer)
     
     def createPatches(self):
         geom = self.gdfRow.geometry
@@ -43,8 +42,8 @@ class PolygonEntity(Entity):
             self.patches.append(ptch.Polygon(coordList, facecolor = self.layer.color, edgecolor = "black", picker=-10))
 
 class PointEntity(Entity):
-    def __init__(self,gdfRow,layer, displayField):
-        super(PointEntity,self).__init__(gdfRow,layer, displayField)
+    def __init__(self,gdfRow,layer):
+        super(PointEntity,self).__init__(gdfRow,layer)
     
     def createPatches(self):
         geom = self.gdfRow.geometry
@@ -53,8 +52,8 @@ class PointEntity(Entity):
             self.artists.append(Line2D([point.x],[point.y], marker="o", markerfacecolor="b", markersize=7, picker=30))
 
 class LineEntity(Entity):
-    def __init__(self,gdfRow,layer, displayField):
-        super(LineEntity,self).__init__(gdfRow,layer, displayField)
+    def __init__(self,gdfRow,layer):
+        super(LineEntity,self).__init__(gdfRow,layer)
     
     def createPatches(self):
         geom = self.gdfRow.geometry
