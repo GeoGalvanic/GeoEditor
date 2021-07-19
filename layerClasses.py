@@ -1,6 +1,7 @@
 '''
 This file contains the layer and layer manager classes which store features and contain other data.
 '''
+import os
 import geopandas as gpd
 import geometryClasses
 from shapely.geometry import Polygon, LineString, MultiLineString, MultiPolygon, Point, MultiPoint
@@ -8,7 +9,7 @@ from shapely.geometry import Polygon, LineString, MultiLineString, MultiPolygon,
 class Layer():
     activeLayers = []
     '''Layer describes the GeoDataframe, Entity Objects and Plotted Artists for a given source file within a given axis.'''
-    def __init__(self, source, axis, displayField = 0):
+    def __init__(self, source, axis, displayField = 0, layerName = None):
         self.source = source
         self.gdf = gpd.read_file(source)
         self.axis = axis
@@ -18,11 +19,17 @@ class Layer():
 
         self.color = "red"
         self.displayField = displayField
+        self.selectable = True #Determines wheter artists of this layer will have pick events
 
         self._generateEntities()
         self.drawArtists()
 
+        self.name = os.path.basename(self.source).split('.')[0] if layerName == None else layerName
+
         Layer.activeLayers.append(self)
+
+    def __str__(self):
+        return self.name
 
     def _generateEntities(self):
         for i, row in self.gdf.iterrows():
@@ -46,3 +53,35 @@ class Layer():
                 self.axis.add_artist(artist)
                 self.artistEntityPairs[artist] = entity
         return True
+
+    def changeName(self):
+        pass
+
+    def changeDisplay(self):
+        pass
+    
+    def saveSource(self):
+        pass
+
+    def saveToFile(self):
+        pass
+
+    def discardEdits(self):
+        pass
+
+    def saveLayerAsFile(self):
+        pass
+
+    def setSelectable(self,value):
+        self.selectable = value
+
+        if value == True:
+            for artist in self.artistEntityPairs:
+                if type(self.artistEntityPairs[artist]) == geometryClasses.PolygonEntity:
+                    artist.set_picker(-10)
+                else:
+                    artist.set_picker(30)
+        else:
+            for artist in self.artistEntityPairs:
+                artist.set_picker(None)
+

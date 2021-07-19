@@ -171,10 +171,13 @@ class AttributeDialog(tk.Toplevel):
             self.editedAttributes = {}
         
 class NewLayerDialog(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, layerMenu):
         super().__init__()
 
-        self.title = "Add New Layer"
+        self.title("Add New Layer")
+        self.attributes('-topmost', 'true')
+
+        self.layerMenu = layerMenu
 
         self.openSourceBtn = ttk.Button(self, command=self.openSource, text="Choose Source")
         self.openSourceBtn.grid(row=0, column=1,padx= 10, pady= 10)
@@ -206,7 +209,44 @@ class NewLayerDialog(tk.Toplevel):
 
         mplElements.GEFigure.figures[-1].canvas.draw()
 
+        self.layerMenu.addLayerSubmenu(newLayer)
+
         self.destroy()
+
+class SymbolDialog(tk.Toplevel):
+    def __init__(self, layer):
+        super().__init__()
+        
+        self.title("Symbology Selector")
+        self.attributes('-topmost', 'true')
+        self.layer = layer
+
+class PointSymbolDialog(SymbolDialog):
+    def __init__(self, layer):
+        super().__init__(layer)
+
+        self.title(f"Point {self.title}")
+
+class LineSymbolDialog(SymbolDialog):
+    def __init__(self, layer):
+        super().__init__(layer)
+
+        self.title(f"Line {self.title}")
+
+class PolygonSymbolDialog(SymbolDialog):
+    def __init__(self, layer):
+        super().__init__(layer)
+
+        self.title(f"Polygon {self.title}")
+
+class AttributeTable(tk.Toplevel):
+    def __init__(self, layer):
+        super().__init__()
+
+        self.title(layer.name + " Layer Table")
+
+        unavailable = ttk.Label(self, text='Layer tables have not yet been implemented...')
+        unavailable.pack(pady=50,padx=50)
 
 
 
