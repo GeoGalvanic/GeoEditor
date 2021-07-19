@@ -1,5 +1,8 @@
+import mplElements
 import tkinter as tk
 from tkinter import ttk
+from layerClasses import Layer
+from tkinter import filedialog
 
 class AttributeDialog(tk.Toplevel):
     #attribute defining currently open window, so that we can assure that there is only one
@@ -167,4 +170,43 @@ class AttributeDialog(tk.Toplevel):
 
             self.editedAttributes = {}
         
+class NewLayerDialog(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+
+        self.title = "Add New Layer"
+
+        self.openSourceBtn = ttk.Button(self, command=self.openSource, text="Choose Source")
+        self.openSourceBtn.grid(row=0, column=1,padx= 10, pady= 10)
+
+        self.sourceText = tk.StringVar()
+        self.sourceEntry = ttk.Entry(self,textvariable=self.sourceText)
+        self.sourceEntry.grid(row=0,column=0, padx= 10, pady= 10, sticky=tk.EW)
+
+        self.columnconfigure(0, weight = 1)
+
+        self.createBtn = ttk.Button(self, text= "Create Layer", command=self.createLayer)
+        self.createBtn.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+    def openSource(self):
+        selectedFile = filedialog.askopenfilename()
+
+        self.sourceText.set(selectedFile)
+
+    def createLayer(self):
+        axes = mplElements.GEFigure.figures[-1].subplot
+
+        axesHasData = True if axes.has_data() else False
+
+        newLayer = Layer( self.sourceText.get(), axes)
+
+        if not axesHasData:
+            axes.relim()
+            axes.autoscale_view()
+
+        mplElements.GEFigure.figures[-1].canvas.draw()
+
+        self.destroy()
+
+
 
