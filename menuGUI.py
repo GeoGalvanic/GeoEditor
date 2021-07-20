@@ -43,7 +43,7 @@ class GeoLayerMenu(tk.Menu):
         NewLayerDialog(self)
 
     def openLayerFile(self):
-        layerFiles = filedialog.askopenfiles()
+        layerFiles = filedialog.askopenfilenames()
 
         for files in layerFiles:
             pass
@@ -78,11 +78,8 @@ class LayerMenu(tk.Menu):
         layerSymbolMenu.add_command(label='Polygon Symbol', command= self.openPolygonSymDia)
 
         #export layer data
-        self.add_command(label='Save Edits...', command= self.layer.saveSource)
-        self.add_command(label='Save New Data File...', command= self.layer.saveToFile)
-
-        #discard layer edits
-        self.add_command(label= 'Discard Edits' , command= self.layer.discardEdits)
+        self.add_command(label='Save Source Data...', command= self.layer.saveData)
+        self.add_command(label='Save New Data File...', command= self.saveToFile)
 
         #change display field
         self.add_command(label='Change Display Field', command=self.changeDisplay)
@@ -98,6 +95,9 @@ class LayerMenu(tk.Menu):
 
         #open layer table
         self.add_command(label= 'Open Table', command=self.openTable)
+
+        #remove layer
+        self.add_command(label='Remove Layer', command=self.removeLayer)
 
     def openPointSymDia(self):
         PointSymbolDialog(self.layer)
@@ -130,6 +130,16 @@ class LayerMenu(tk.Menu):
 
             self.layer.changeName(name)
 
+    def saveToFile(self):
+        file = filedialog.asksaveasfilename(confirmoverwrite=True, filetypes=[('Shapefile', '*.shp')] )
+
+        if file:
+            self.layer.saveData(file)
+            
     def openTable(self):
         AttributeTable(self.layer)
 
+    def removeLayer(self):
+        self.layer.removeSelf()
+
+        self.destroy()

@@ -7,15 +7,16 @@ Created by: Geal Q. Sarrett 08JUL21
 import matplotlib.pyplot as plt
 import tkinter as tk
 import logging
-from geometryClasses import *
 from menuGUI import *
 from mplElements import GEFigure
 
+#Initialize the root tk app and set parameters
 root= tk.Tk()
 root.title("GeoEditor")
 root.option_add('*tearOff', tk.FALSE)
-root['menu'] = GeoMenu(root)
 
+#Add menubar and custom matplotlib figure to the application
+root['menu'] = GeoMenu(root)
 figure = GEFigure(root)
 
 plt.show(block=False)

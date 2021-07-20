@@ -7,9 +7,11 @@ from matplotlib.lines import Line2D
 
 class Entity():
     '''Abstract base class for entities. Shold not be called directly, insead sub-classes should be used.'''
-    def __init__(self,gdfRow,layer):
-        self.gdfRow = gdfRow
+    def __init__(self,gdfIndex,layer):
+        
         self.layer = layer
+        self.gdfIndex = gdfIndex
+        self.gdfRow = self.layer.gdf.loc[gdfIndex]
 
         self.patches = []
         self.artists = []

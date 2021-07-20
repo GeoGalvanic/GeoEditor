@@ -5,6 +5,8 @@ import os
 import geopandas as gpd
 import geometryClasses
 from shapely.geometry import Polygon, LineString, MultiLineString, MultiPolygon, Point, MultiPoint
+import dialogGUI
+import mplElements
 
 class Layer():
     activeLayers = []
@@ -35,11 +37,11 @@ class Layer():
         for i, row in self.gdf.iterrows():
             geomType = type(row.geometry)
             if geomType == Polygon or geomType == MultiPolygon:
-                entity = geometryClasses.PolygonEntity(row,self)
+                entity = geometryClasses.PolygonEntity(i,self)
             elif geomType == Point or geomType == MultiPoint:
-                entity = geometryClasses.PointEntity(row,self)
+                entity = geometryClasses.PointEntity(i,self)
             elif geomType == LineString or geomType == MultiLineString:
-                entity = geometryClasses.LineEntity(row,self)
+                entity = geometryClasses.LineEntity(i,self)
             else:
                 print('invalid geometry type')
             self.entities.append(entity)
@@ -57,14 +59,10 @@ class Layer():
     def changeName(self, value):
         self.name = value
     
-    def saveSource(self):
-        pass
+    def saveData(self, file = None):
+        file = file if file else self.source
 
-    def saveToFile(self):
-        pass
-
-    def discardEdits(self):
-        pass
+        self.gdf.to_file(file)
 
     def saveLayerAsFile(self):
         pass
@@ -81,4 +79,30 @@ class Layer():
         else:
             for artist in self.artistEntityPairs:
                 artist.set_picker(None)
+
+    def removeSelf(self):
+        for artist in self.artistEntityPairs:
+            artist.remove()
+            del artist
+        self.artistEntityPairs = {}
+
+
+        curAttWindow = dialogGUI.AttributeDialog.existingWindow
+        if curAttWindow:
+            entitiesToRemove = []
+            for entity in curAttWindow.entities:
+                if entity.layer == self:
+                    entitiesToRemove.append(entity)
+
+            while entitiesToRemove:
+                entity = entitiesToRemove.pop()
+                curAttWindow.removeEntity(entity)
+
+        while self.entities:
+            entity = self.entities.pop()
+            del entity
+
+        Layer.activeLayers.remove(self)
+
+        mplElements.GEFigure.figures[-1].canvas.draw()
 

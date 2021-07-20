@@ -124,7 +124,9 @@ class AttributeDialog(tk.Toplevel):
         for label in self.editedAttributes:
             entryBox = self.editedAttributes[label][0]
 
-            self.selectedEntity.gdfRow[label.cget("text")] = entryBox.get()
+            self.selectedEntity.layer.gdf.loc[
+                (self.selectedEntity.gdfIndex,label.cget("text"))
+                ] = entryBox.get()
 
         self.editingSwitch('off')
 
@@ -136,13 +138,17 @@ class AttributeDialog(tk.Toplevel):
 
         self.editingSwitch('off')
 
-    def removeEntity(self):
+    def removeEntity(self, entity = None):
         if len(self.entities) > 1:
-            self.entities.remove(self.selectedEntity)
 
-            self.selectedEntity = self.entities[-1]
-            self.entitySelector.set_menu(self.entities[-1], *self.entities)
-            self.fillAttibutes(self.selectedEntity)
+            entity = entity if entity else self.selectedEntity
+            
+            self.entities.remove(entity)
+
+            if entity == self.selectedEntity:
+                self.selectedEntity = self.entities[-1]
+                self.entitySelector.set_menu(self.entities[-1], *self.entities)
+                self.fillAttibutes(self.selectedEntity)
 
             if len(self.entities) == 1:
                 self.removeEntityBtn.configure(state='disabled')
@@ -192,7 +198,7 @@ class NewLayerDialog(tk.Toplevel):
         self.createBtn.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
     def openSource(self):
-        selectedFile = filedialog.askopenfilename()
+        selectedFile = filedialog.askopenfilename(filetypes=[("Shapefile", "*.shp")] )
 
         self.sourceText.set(selectedFile)
 
