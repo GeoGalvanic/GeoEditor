@@ -9,28 +9,33 @@ class GEFigure(plt.Figure):
 
     def __init__(self, parent):
         super().__init__()
+        try:
+            self.subplot = self.add_subplot()
+            self.subplot.set_axis_off()
+            self.subplot.set_aspect('equal', adjustable = 'datalim', anchor = 'C')
 
-        self.subplot = self.add_subplot()
-        self.subplot.set_axis_off()
-        self.subplot.set_aspect('equal', adjustable = 'datalim', anchor = 'C')
+            self.canvas = FigureCanvasTkAgg(self, parent)
 
-        self.canvas = FigureCanvasTkAgg(self, parent)
+            self.set_tight_layout(True)
 
-        self.set_tight_layout(True)
+            self.canvas.mpl_connect('pick_event', self.on_pick)
+            toolbar = NavigationToolbar2Tk(self.canvas, parent, pack_toolbar=False)
+            toolbar.update()
 
-        self.canvas.mpl_connect('pick_event', self.on_pick)
-        toolbar = NavigationToolbar2Tk(self.canvas, parent, pack_toolbar=False)
-        toolbar.update()
+            toolbar.pack(side=tk.TOP,fill=tk.X)
+            self.canvas.get_tk_widget().pack(expand = True, side=tk.TOP, fill=tk.BOTH)
 
-        toolbar.pack(side=tk.TOP,fill=tk.X)
-        self.canvas.get_tk_widget().pack(expand = True, side=tk.TOP, fill=tk.BOTH)
-
-        self.figures.append(self)
+            self.figures.append(self)
+        except:
+            dialogGUI.ErrorDialog('Initializing a figure')
 
     def on_pick(self, event):
         if event.mouseevent.name == 'button_press_event':
-            for layer in Layer.activeLayers:
-                try:
-                    dialogGUI.AttributeDialog.openOrAdd(layer.artistEntityPairs[event.artist])
-                except KeyError:
-                    pass
+            try:
+                for layer in Layer.activeLayers:
+                    try:
+                        dialogGUI.AttributeDialog.openOrAdd(layer.artistEntityPairs[event.artist])
+                    except KeyError:
+                        pass
+            except:
+                dialogGUI.ErrorDialog(f'processing pick event ({event}) in figure: {self}')

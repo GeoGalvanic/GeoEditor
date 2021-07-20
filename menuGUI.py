@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, simpledialog
-from dialogGUI import NewLayerDialog, PointSymbolDialog, LineSymbolDialog, PolygonSymbolDialog, AttributeTable
+from dialogGUI import NewLayerDialog, PointSymbolDialog, LineSymbolDialog, PolygonSymbolDialog, AttributeTable, ErrorDialog
 
 class GeoMenu(tk.Menu):
     def __init__(self, parent):
@@ -66,38 +66,43 @@ class LayerMenu(tk.Menu):
         self.parent = parent
         self.layer = layer
 
-        #change layer name
-        self.add_command(label = "Change Layer Name", command=self.changeName)
+        try:
 
-        #change layer symbols
-        layerSymbolMenu = tk.Menu(self)
-        self.add_cascade(menu=layerSymbolMenu, label = 'Change Symbology')
+            #change layer name
+            self.add_command(label = "Change Layer Name", command=self.changeName)
 
-        layerSymbolMenu.add_command(label='Point Symbol', command= self.openPointSymDia)
-        layerSymbolMenu.add_command(label='Line Symbol', command= self.openLineSymDia)
-        layerSymbolMenu.add_command(label='Polygon Symbol', command= self.openPolygonSymDia)
+            #change layer symbols
+            layerSymbolMenu = tk.Menu(self)
+            self.add_cascade(menu=layerSymbolMenu, label = 'Change Symbology')
 
-        #export layer data
-        self.add_command(label='Save Source Data...', command= self.layer.saveData)
-        self.add_command(label='Save New Data File...', command= self.saveToFile)
+            layerSymbolMenu.add_command(label='Point Symbol', command= self.openPointSymDia)
+            layerSymbolMenu.add_command(label='Line Symbol', command= self.openLineSymDia)
+            layerSymbolMenu.add_command(label='Polygon Symbol', command= self.openPolygonSymDia)
 
-        #change display field
-        self.add_command(label='Change Display Field', command=self.changeDisplay)
+            #export layer data
+            self.add_command(label='Save Source Data...', command= self.layer.saveData)
+            self.add_command(label='Save New Data File...', command= self.saveToFile)
 
-        #change selectable
-        self.selectable = tk.BooleanVar(self,True)
-        self.add_checkbutton(label='Selectable', variable= self.selectable, onvalue= True, offvalue= False)
+            #change display field
+            self.add_command(label='Change Display Field', command=self.changeDisplay)
 
-        self.selectable.trace_add("write", self.changeSelectable)
+            #change selectable
+            self.selectable = tk.BooleanVar(self,True)
+            self.add_checkbutton(label='Selectable', variable= self.selectable, onvalue= True, offvalue= False)
 
-        #save layer file
-        self.add_command(label='Create Layer File', command=layer.saveLayerAsFile)
+            self.selectable.trace_add("write", self.changeSelectable)
 
-        #open layer table
-        self.add_command(label= 'Open Table', command=self.openTable)
+            #save layer file
+            self.add_command(label='Create Layer File', command=layer.saveLayerAsFile)
 
-        #remove layer
-        self.add_command(label='Remove Layer', command=self.removeLayer)
+            #open layer table
+            self.add_command(label= 'Open Table', command=self.openTable)
+
+            #remove layer
+            self.add_command(label='Remove Layer', command=self.removeLayer)
+
+        except:
+            ErrorDialog(f'Creating layer menu for {self.layer}')
 
     def openPointSymDia(self):
         PointSymbolDialog(self.layer)
@@ -118,7 +123,7 @@ class LayerMenu(tk.Menu):
             try:
                 self.layer.gdf[field]
             except KeyError:
-                print("Invalid Disply Field, no such column with name.")
+                print("Invalid Display Field, no such column with name.")
             else:
                 self.layer.displayField = field
 
