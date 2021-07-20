@@ -19,6 +19,28 @@ class Layer():
         self.entities = []
         self.artistEntityPairs = {}
 
+        self.pointSymbology = {
+            'marker' : 'o',
+            'markeredgecolor' : 'gray',
+            'markeredgewidth' : 0.7,
+            'markerfacecolor' : 'blue',
+            'markersize' : 8
+        }
+
+        self.lineSymbology = {
+            'color' : 'green',
+            'linestyle' : '-',
+            'linewidth' : 2
+        }
+
+        self.polygonSymbology = {
+            'facecolor' : 'red',
+            'edgecolor' : 'gray',
+            'linestyle' : '-',
+            'linewidth' : 1,
+            'joinstyle' : 'round'
+        }
+
         self.color = "red"
         self.displayField = displayField
         self.selectable = True #Determines wheter artists of this layer will have pick events

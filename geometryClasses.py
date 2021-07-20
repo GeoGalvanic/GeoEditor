@@ -41,7 +41,13 @@ class PolygonEntity(Entity):
             for coord in coordSequence:
                 coordList.append(coord)
 
-            self.patches.append(ptch.Polygon(coordList, facecolor = self.layer.color, edgecolor = "black", picker=-10))
+            self.patches.append(
+                ptch.Polygon(
+                    coordList,
+                    **self.layer.polygonSymbology,
+                    picker=-10
+                    )
+                )
 
 class PointEntity(Entity):
     def __init__(self,gdfRow,layer):
@@ -51,7 +57,14 @@ class PointEntity(Entity):
         geom = self.gdfRow.geometry
 
         for point in geom if type(geom) == MultiPoint else [geom]:
-            self.artists.append(Line2D([point.x],[point.y], marker="o", markerfacecolor="b", markersize=7, picker=30))
+            self.artists.append(
+                Line2D(
+                    [point.x],
+                    [point.y],
+                    **self.layer.pointSymbology,
+                    picker=30
+                    )
+                )
 
 class LineEntity(Entity):
     def __init__(self,gdfRow,layer):
@@ -61,4 +74,11 @@ class LineEntity(Entity):
         geom = self.gdfRow.geometry
 
         for line in geom if type(geom) == MultiLineString else [geom]:
-            self.artists.append(Line2D([point[0] for point in line.coords],[point[1] for point in line.coords], lw = 2, color = "green", picker=30))
+            self.artists.append(
+                Line2D(
+                    [point[0] for point in line.coords],
+                    [point[1] for point in line.coords],
+                    **self.layer.lineSymbology,
+                    picker=30
+                    )
+                )
