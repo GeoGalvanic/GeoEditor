@@ -6,7 +6,6 @@ Created by: Geal Q. Sarrett 08JUL21
 
 import matplotlib.pyplot as plt
 import tkinter as tk
-import logging
 from menuGUI import *
 from mplElements import GEFigure
 

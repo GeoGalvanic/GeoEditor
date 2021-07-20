@@ -62,7 +62,8 @@ class PointEntity(Entity):
                     [point.x],
                     [point.y],
                     **self.layer.pointSymbology,
-                    picker=30
+                    picker=True,
+                    pickradius=30
                     )
                 )
 
@@ -79,6 +80,7 @@ class LineEntity(Entity):
                     [point[0] for point in line.coords],
                     [point[1] for point in line.coords],
                     **self.layer.lineSymbology,
-                    picker=30
+                    picker=True,
+                    pickradius=30
                     )
                 )

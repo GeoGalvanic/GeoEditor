@@ -102,6 +102,21 @@ class Layer():
             for artist in self.artistEntityPairs:
                 artist.set_picker(None)
 
+    def redrawArtists(self):
+        for artist in self.artistEntityPairs:
+            if type(self.artistEntityPairs[artist]) == geometryClasses.PolygonEntity:
+                artist.set(**self.polygonSymbology)
+
+            if type(self.artistEntityPairs[artist]) == geometryClasses.LineEntity:
+                artist.set(**self.lineSymbology)
+
+            if type(self.artistEntityPairs[artist]) == geometryClasses.PointEntity:
+                artist.set(**self.pointSymbology)
+
+            mplElements.GEFigure.figures[-1].draw_artist(artist)
+        
+        mplElements.GEFigure.figures[-1].canvas.draw()
+
     def removeSelf(self):
         for artist in self.artistEntityPairs:
             artist.remove()

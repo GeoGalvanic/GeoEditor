@@ -2,7 +2,7 @@ import mplElements
 import tkinter as tk
 from tkinter import ttk
 from layerClasses import Layer
-from tkinter import filedialog
+from tkinter import filedialog, colorchooser
 
 class AttributeDialog(tk.Toplevel):
     #attribute defining currently open window, so that we can assure that there is only one
@@ -142,7 +142,7 @@ class AttributeDialog(tk.Toplevel):
         if len(self.entities) > 1:
 
             entity = entity if entity else self.selectedEntity
-            
+
             self.entities.remove(entity)
 
             if entity == self.selectedEntity:
@@ -227,23 +227,138 @@ class SymbolDialog(tk.Toplevel):
         self.attributes('-topmost', 'true')
         self.layer = layer
 
+        #Make second column exandable
+        self.columnconfigure(1, weight = 1)
+
+    def promptColor(self, color):
+        return colorchooser.askcolor(color)
+
 class PointSymbolDialog(SymbolDialog):
     def __init__(self, layer):
         super().__init__(layer)
 
-        self.title(f"Point {self.title}")
+        self.title("Point Symbology Selector")
+
+        self.currentVals = self.layer.pointSymbology
+
+        #Dictionary to lookup common shape names compared to their MPL marker style string
+        self.valueLookup = {
+            'Circle' :   'o',
+            'Triangle' : '^',
+            'Square' :   's',
+            'Star' :     '*',
+            'Plus' :     'P',
+            'Cross' :    'X',
+            'Diamond' :  'd'
+        }
+
+        #Input widgets for defining the shape/marker of point symbols
+        self.markerLabel = ttk.Label(self, text='Shape: ')
+        self.markerLabel.grid(column=0, row = 0, padx=10,pady=10)
+
+        self.markerChoices = [shape for shape in self.valueLookup] #all shapes available in lookup dict
+        self.markerChoice = tk.StringVar()
+        self.markerOpt = ttk.OptionMenu(self, self.markerChoice, self.getCurrentMarker(), *self.markerChoices, command = self.setMarkerSelection)
+        self.markerOpt.grid(column=1, row = 0, pady=10, padx=10,sticky=tk.EW)
+
+        #Input widgets for defining marker color
+        self.markerfacecolorLabel = ttk.Label(self, text='Fill Color: ')
+        self.markerfacecolorLabel.grid(column=0, row=1, padx= 10, pady =10)
+
+        self.markerfacecolorBtn = tk.Button(
+            self, command= self.setMarkerFaceColor, bg= self.currentVals['markerfacecolor'],
+            activebackground= self.currentVals['markerfacecolor'], width=5
+        )
+        self.markerfacecolorBtn.grid(column=1, row=1, padx=10, pady = 10)
+
+        #Input widgets for defining marker outline color
+        self.markeredgecolorLabel = ttk.Label(self, text='Outline Color: ')
+        self.markeredgecolorLabel.grid(column=0, row=2, padx= 10, pady =10)
+
+        self.markeredgecolorBtn = tk.Button(
+            self, command= self.setMarkerEdgeColor, bg= self.currentVals['markeredgecolor'],
+            activebackground= self.currentVals['markeredgecolor'], width=5
+        )
+        self.markeredgecolorBtn.grid(column=1, row=2, padx=10, pady = 10)
+
+        #Input widgets for outline size
+        self.markeredgewidthLabel = ttk.Label(self, text='Outline Width: ')
+        self.markeredgewidthLabel.grid(column=0, row=3, padx= 10, pady =10)
+
+        self.markeredgewidth = tk.IntVar( value= self.currentVals['markeredgewidth'])
+        self.markeredgewidthSpin = ttk.Spinbox(self, from_= 0.0, to= 1000.0, textvariable=self.markeredgewidth)
+        self.markeredgewidthSpin.grid(column=1, row=3, padx=10, pady = 10)
+
+        #Input widgets for marker size
+        self.markersizeLabel = ttk.Label(self, text='Size: ')
+        self.markersizeLabel.grid(column=0, row=4, padx= 10, pady =10)
+
+        self.markersize = tk.IntVar( value= self.currentVals['markersize'])
+        self.markersizeSpin = ttk.Spinbox(self, from_= 0.0, to= 1000.0, textvariable=self.markersize)
+        self.markersizeSpin.grid(column=1, row=4, padx=10, pady = 10)
+
+        #Apply button
+        self.applyBtn = ttk.Button(self, text='Apply', command=self.applySymbology)
+        self.applyBtn.grid(column=0, columnspan= 2, row= 5, pady=10)
+
+    def setMarkerSelection(self, choice):
+        self.currentVals['marker'] = self.valueLookup[choice]
+
+    def getCurrentMarker(self):
+        current = self.currentVals['marker']
+        invLookup = {v : k for k, v in self.valueLookup.items()}
+
+        return invLookup[current]
+
+    def setMarkerFaceColor(self):
+        currentColor = self.currentVals['markerfacecolor']
+        color = self.promptColor(currentColor)
+
+        if color:
+            self.currentVals['markerfacecolor'] = color[1]
+
+            self.markerfacecolorBtn.configure({'bg': color[1], 'activebackground' : color[1]})
+
+    def setMarkerEdgeColor(self):
+        currentColor = self.currentVals['markeredgecolor']
+        color = self.promptColor(currentColor)
+
+        if color:
+            self.currentVals['markeredgecolor'] = color[1]
+
+            self.markeredgecolorBtn.configure({'bg': color[1], 'activebackground' : color[1]})
+
+    def applySymbology(self):
+        self.currentVals['markeredgewidth'] = self.markeredgewidth.get()
+        self.currentVals['markersize'] = self.markersize.get()
+
+        print(self.currentVals)
+
+        self.layer.pointSymbology = self.currentVals
+
+        print(self.layer.pointSymbology)
+
+        self.layer.redrawArtists()
+
+        self.destroy()
 
 class LineSymbolDialog(SymbolDialog):
     def __init__(self, layer):
         super().__init__(layer)
 
-        self.title(f"Line {self.title}")
+        self.title("Line Symbology Selector")
+
+        self.nyiLabel = ttk.Label(self, text="This dialog has not been implemented yet")
+        self.nyiLabel.pack(padx= 50, pady = 50)
 
 class PolygonSymbolDialog(SymbolDialog):
     def __init__(self, layer):
         super().__init__(layer)
 
-        self.title(f"Polygon {self.title}")
+        self.title("Polygon Symbology Selector")
+
+        self.nyiLabel = ttk.Label(self, text="This dialog has not been implemented yet")
+        self.nyiLabel.pack(padx= 50, pady = 50)
 
 class AttributeTable(tk.Toplevel):
     def __init__(self, layer):
