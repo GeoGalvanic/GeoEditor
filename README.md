@@ -2,10 +2,6 @@
 
 The **GeoEditor** is a light-weight desktop application for interactively editing Geodata files (currently only Shapefiles). 
 
-## Installation
-
-Overview on how to install program
-
 ## Features
 
 * **Adding GeoData as layers to application**
