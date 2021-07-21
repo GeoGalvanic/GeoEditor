@@ -26,10 +26,10 @@ Overview on how to install program
 
 ## Dependencies
 
-* [Matplotlib](https://github.com/matplotlib/matplotlib) v3.2.2
+* [Matplotlib](https://github.com/matplotlib/matplotlib) v3.3.2
 
   Matplotlib is used for displaying interactive maps (graphs) of GeoData and 
-* [Geopandas](https://github.com/geopandas/geopandas) v0.9.0
+* [Geopandas](https://github.com/geopandas/geopandas) v0.6.1
 
   Geopandas is used for opening geodata files, using GeoDataFrames to track attribute edits, plotting geometry to matplotlib and 
   
