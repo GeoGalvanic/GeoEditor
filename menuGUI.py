@@ -20,33 +20,26 @@ class GeoFileMenu(tk.Menu):
         self.add_command(label='Save As...', command=self.saveFileAs)
 
     def newFile(self):
-        pass
+        nyiFeature()
 
     def openFile(self):
-        pass
+        nyiFeature()
 
     def saveFile(self):
-        pass
+        nyiFeature()
 
     def saveFileAs(self):
-        pass
+        nyiFeature()
 
 class GeoLayerMenu(tk.Menu):
     def __init__(self, parent):
         super().__init__(parent)
 
         self.add_command(label='Add New Layer...', command=self.newLayer)
-        self.add_command(label='Open Layer File...', command=self.openLayerFile)
         self.add_separator()
 
     def newLayer(self):
         NewLayerDialog(self)
-
-    def openLayerFile(self):
-        layerFiles = filedialog.askopenfilenames()
-
-        for files in layerFiles:
-            pass
 
     def addLayerSubmenu(self, layer):
         layerMenu = LayerMenu(self, layer)
@@ -71,18 +64,6 @@ class LayerMenu(tk.Menu):
             #change layer name
             self.add_command(label = "Change Layer Name", command=self.changeName)
 
-            #change layer symbols
-            layerSymbolMenu = tk.Menu(self)
-            self.add_cascade(menu=layerSymbolMenu, label = 'Change Symbology')
-
-            layerSymbolMenu.add_command(label='Point Symbol', command= self.openPointSymDia)
-            layerSymbolMenu.add_command(label='Line Symbol', command= self.openLineSymDia)
-            layerSymbolMenu.add_command(label='Polygon Symbol', command= self.openPolygonSymDia)
-
-            #export layer data
-            self.add_command(label='Save Source Data...', command= self.layer.saveData)
-            self.add_command(label='Save New Data File...', command= self.saveToFile)
-
             #change display field
             self.add_command(label='Change Display Field', command=self.changeDisplay)
 
@@ -92,14 +73,32 @@ class LayerMenu(tk.Menu):
 
             self.selectable.trace_add("write", self.changeSelectable)
 
-            #save layer file
-            self.add_command(label='Create Layer File', command=layer.saveLayerAsFile)
+            self.add_separator()
 
-            #open layer table
-            self.add_command(label= 'Open Table', command=self.openTable)
+            #change layer symbols
+            layerSymbolMenu = tk.Menu(self)
+            self.add_cascade(menu=layerSymbolMenu, label = 'Change Symbology')
+
+            layerSymbolMenu.add_command(label='Point Symbol', command= self.openPointSymDia)
+            layerSymbolMenu.add_command(label='Line Symbol', command= self.openLineSymDia)
+            layerSymbolMenu.add_command(label='Polygon Symbol', command= self.openPolygonSymDia)
+
+            self.add_separator()
+
+            #export layer data
+            self.add_command(label='Save Source Data...', command= self.layer.saveData)
+            self.add_command(label='Save New Data File...', command= self.saveToFile)
+
+            self.add_separator()
 
             #remove layer
             self.add_command(label='Remove Layer', command=self.removeLayer)
+
+            #save layer file
+            self.add_command(label='Create Layer File', command=layer.saveLayerAsFile, state="disabled")
+
+            #open layer table
+            self.add_command(label= 'Open Table', command=self.openTable, state="disabled")
 
         except:
             ErrorDialog(f'Creating layer menu for {self.layer}')
@@ -148,3 +147,14 @@ class LayerMenu(tk.Menu):
         self.layer.removeSelf()
 
         self.destroy()
+
+class nyiFeature(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Feature Unavailble")
+        self.msg = tk.Label(self, text="This feature has not yet been implemented.")
+        self.msg.pack(side=tk.TOP, padx= 50, pady= 50)
+
+        self.btn = tk.Button(self, text="close", command=self.destroy)
+        self.btn.pack(side=tk.BOTTOM, pady=5)
