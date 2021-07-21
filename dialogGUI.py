@@ -376,11 +376,7 @@ class PointSymbolDialog(SymbolDialog):
             self.currentVals['markeredgewidth'] = self.markeredgewidth.get()
             self.currentVals['markersize'] = self.markersize.get()
 
-            print(self.currentVals)
-
             self.layer.pointSymbology = self.currentVals
-
-            print(self.layer.pointSymbology)
 
             self.layer.redrawArtists()
 
